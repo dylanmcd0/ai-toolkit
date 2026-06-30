@@ -1,0 +1,2 @@
+[console_scripts]
+ai-toolkit = ai_toolkit.cli:main

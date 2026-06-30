@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-toolkit"
+version = "0.1.0"
+description = "CLI toolkit for AI workflows, MCP setup, and automation"
+requires-python = ">=3.10"
+authors = [{name = "Dylan McDonald", email = "dylmcdona@icloud.com"}]
+dependencies = [
+    "click>=8.1.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+ai-toolkit = "ai_toolkit.cli:main"
+
+[tool.setuptools]
+packages = ["ai_toolkit"]
