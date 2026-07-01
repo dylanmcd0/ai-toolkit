@@ -75,7 +75,9 @@ python3 tools/mcp/mcp_config.py list --config config/mcp-servers.local.json
 - `recipes/rtk-token-saving.md` — token/context-saving workflow outline.
 - `scripts/install-rtk-for-claude.sh` — initializes RTK for Claude Code after RTK is installed.
 - `scripts/install-rtk-for-codex.sh` — initializes RTK for Codex after RTK is installed.
+- `scripts/update-ai-clis.sh` — updates/checks Claude Code, Codex CLI, and RTK.
 - `scripts/save-codex-token-context.sh` — local context snapshot helper.
+- `recipes/ai-cli-updates.md` — update policy and manual commands for AI CLIs.
 
 ## Principles
 
