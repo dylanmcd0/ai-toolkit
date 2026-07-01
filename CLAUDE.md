@@ -1,78 +1,39 @@
-# AI Toolkit Project
+# CLAUDE.md
 
-## Overview
+## Project Overview
 
-A learning and tooling repository for AI workflows, MCP server management, and automation utilities. This serves as both a CLI tool and a documentation hub for concepts discovered while researching AI technologies.
+This repository is a personal AI engineering toolkit. It collects small utilities, setup recipes, prompts, and local scripts for working with AI coding tools such as Claude, Codex, MCP servers, GitHub Actions, and token/context-saving workflows.
 
-## Project Structure
+The repo should remain docs-first and modular. Avoid turning it into one large CLI unless a workflow has already proven useful as a small script or recipe.
 
-```
-ai-toolkit/
-├── ai_toolkit/
-│   ├── commands/          # CLI command modules
-│   │   ├── mcp.py         # MCP server management
-│   │   ├── workflows.py   # Multi-agent workflow setup
-│   │   └── github_actions.py # GitHub Actions integration
-│   ├── utils/             # Shared utilities
-│   │   └── mcp_config.py  # MCP configuration handler
-│   └── cli.py             # Main CLI entry point
-├── docs/                  # Learning materials & guides
-├── tests/                 # Test suite
-├── pyproject.toml         # Package configuration
-└── README.md              # User guide
-```
+## Structure
 
-## Core Features
+- `tools/` — focused utilities, such as MCP config helpers.
+- `prompts/` — reusable prompts and review rubrics.
+- `recipes/` — Markdown setup guides and operational playbooks.
+- `scripts/` — convenience scripts for local setup or context capture.
+- `config/` — example configuration files; local config should be ignored.
+- `ai_toolkit/` — existing Python CLI package from the initial scaffold; migrate useful behavior gradually.
+- `docs/` — background/reference notes from earlier exploration.
 
-### 1. MCP Server Management (`ai_toolkit/commands/mcp.py`)
-- `add` — Add/configure an MCP server
-- `list` — Show all configured servers
-- `remove` — Remove a server configuration
-- `validate` — Validate MCP configuration
+## Commands
 
-**Configuration File**: Reads/writes to Claude Code's `settings.json`, typically at `~/.claude/claude_code/settings.json`
+- Run MCP helper: `python3 tools/mcp/mcp_config.py --help`
+- List example MCP config: `python3 tools/mcp/mcp_config.py list --config config/mcp-servers.example.json`
+- Install legacy package, if needed: `pip install -e .`
+- Run legacy tests, if expanded later: `pytest`
 
-### 2. Multi-Agent Workflows (`ai_toolkit/commands/workflows.py`)
-Placeholder for workflow scaffolding and management tools.
+## Coding Preferences
 
-### 3. GitHub Actions (`ai_toolkit/commands/github_actions.py`)
-Placeholder for GitHub Actions automation (PR review, etc.).
+- Prefer small, explicit scripts and Markdown recipes over broad abstractions.
+- Do not introduce new dependencies unless they remove meaningful complexity.
+- Keep secrets, tokens, and machine-local paths out of git.
+- Keep examples copy-pastable and easy to adapt.
+- Do not delete the legacy CLI package unless explicitly asked; migrate from it incrementally.
 
-## Development Notes
+## Review Expectations
 
-- **Language**: Python 3.10+
-- **CLI Framework**: Click
-- **Configuration Format**: JSON (Claude Code compatible)
-- **Config Discovery**: Automatically finds Claude Code settings; supports custom paths via `--config-path`
-
-## Next Steps
-
-1. **Test MCP setup** — Verify the `add`, `list`, `remove` commands work
-2. **Add more MCP servers** — Build out templates/presets for popular servers
-3. **Implement workflows** — Build multi-agent workflow scaffolding
-4. **Document learnings** — Add `docs/` with AI/MCP concepts
-5. **GitHub Actions** — Create reusable GitHub Actions workflows
-
-## Learning & Documentation
-
-This repo doubles as a learning journal. As you discover new AI concepts, tools, or patterns, document them in `docs/` alongside the tooling:
-- `docs/mcp-guide.md` — How MCP works
-- `docs/multi-agent-patterns.md` — Common patterns for multi-agent systems
-- `docs/ai-concepts.md` — Key concepts and definitions
-- etc.
-
-## Useful Commands
-
-```bash
-# Install in development mode
-pip install -e .
-
-# Test a command
-ai-toolkit mcp list
-
-# Format code
-black ai_toolkit/
-
-# Run tests
-pytest
-```
+- Prioritize correctness, maintainability, and practical usability.
+- Flag YAGNI abstractions and framework-heavy changes.
+- Suggest the smallest useful improvement.
+- Ignore formatting-only issues unless no formatter/linter exists.

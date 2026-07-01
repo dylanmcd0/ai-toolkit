@@ -1,0 +1,13 @@
+# Local config and secrets
+config/*.local.json
+*.env
+.env.*
+
+# Runtime output
+.DS_Store
+__pycache__/
+*.pyc
+
+# Token/context scratch files
+tokens/
+context-snapshots/
