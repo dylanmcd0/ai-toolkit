@@ -12,10 +12,10 @@ if ! command -v rtk >/dev/null 2>&1; then
 fi
 
 echo "Found $(rtk --version)"
-echo "Initializing RTK globally for Claude Code / default hook-based agents..."
-rtk init -g
+echo "Initializing RTK globally for Codex..."
+rtk init -g --codex
 
 echo
-echo "Done. Restart Claude Code, then test with:"
+echo "Done. Restart Codex, then test with:"
 echo "  git status"
 echo "  rtk gain"

@@ -73,6 +73,8 @@ python3 tools/mcp/mcp_config.py list --config config/mcp-servers.local.json
 - `recipes/claude-code-review.md` — practical Claude code review setup notes.
 - `recipes/claude-md-practices.md` — guidance and template for repository `CLAUDE.md` files.
 - `recipes/rtk-token-saving.md` — token/context-saving workflow outline.
+- `scripts/install-rtk-for-claude.sh` — initializes RTK for Claude Code after RTK is installed.
+- `scripts/install-rtk-for-codex.sh` — initializes RTK for Codex after RTK is installed.
 - `scripts/save-codex-token-context.sh` — local context snapshot helper.
 
 ## Principles
