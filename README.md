@@ -1,88 +1,62 @@
 # AI Toolkit
 
-A personal AI engineering toolkit for repeatable setup, prompt patterns, and small helper tools.
+This repo is a docs-first set of small AI workflow utilities. The current priority is `tools/mcp`: a small Python CLI for keeping one MCP server registry and installing entries into the clients you actually use.
 
-This repo is intentionally **docs-first and modular**. It is not meant to become one large CLI app. Instead, it collects practical building blocks:
+## Current Shape
 
-- `tools/` — small focused utilities, starting with MCP server configuration helpers.
-- `prompts/` — reusable prompts and review rubrics.
-- `recipes/` — step-by-step setup guides for workflows and integrations.
-- `scripts/` — installers and convenience scripts for local environments.
-- `config/` — example configuration files and local config conventions.
-- `ai_toolkit/` — existing Python CLI package from the first scaffold; useful pieces can be migrated into `tools/` over time.
+- `tools/mcp/` stores the MCP registry CLI and usage notes.
+- `config/` holds tracked examples only; your real registry lives in `config/mcp-servers.json`.
+- `recipes/`, `prompts/`, and `scripts/` stay as independent building blocks instead of being folded into one package.
 
-## Current Focus
+## MCP Workflow
 
-1. Standardize how MCP servers are added and stored.
-2. Capture RTK/token-saving setup patterns for Claude and Codex.
-3. Document code review workflows and good `CLAUDE.md` practices.
-4. Keep everything easy to copy, adapt, and extend.
-
-## Repository Layout
-
-```text
-ai-toolkit/
-  config/
-    mcp-servers.example.json
-  prompts/
-    code-review-yagni.md
-  recipes/
-    claude-code-review.md
-    claude-md-practices.md
-    rtk-token-saving.md
-  scripts/
-    install-rtk-for-claude.sh
-    save-codex-token-context.sh
-  tools/
-    mcp/
-      README.md
-      mcp_config.py
-  ai_toolkit/
-    existing Python CLI package
-```
-
-## Quick Start: MCP Config
-
-Create a local MCP config from the example:
+Copy the example registry:
 
 ```bash
-cp config/mcp-servers.example.json config/mcp-servers.local.json
+cp config/mcp-servers.example.json config/mcp-servers.json
 ```
 
-Add an MCP server:
+List the servers in your registry:
 
 ```bash
-python3 tools/mcp/mcp_config.py add \
-  --config config/mcp-servers.local.json \
-  --name filesystem \
-  --command npx \
-  --arg "-y" \
-  --arg "@modelcontextprotocol/server-filesystem" \
-  --arg "$HOME/Documents"
+python3 tools/mcp/mcp_config.py list
 ```
 
-List configured MCP servers:
+Install one into Claude Code:
 
 ```bash
-python3 tools/mcp/mcp_config.py list --config config/mcp-servers.local.json
+python3 tools/mcp/mcp_config.py install filesystem --client claude --scope user
 ```
 
-## Included Starters
+Install one into Codex:
 
-- `prompts/code-review-yagni.md` — review prompt focused on YAGNI, correctness, and maintainability.
-- `recipes/claude-code-review.md` — practical Claude code review setup notes.
-- `recipes/claude-md-practices.md` — guidance and template for repository `CLAUDE.md` files.
-- `recipes/rtk-token-saving.md` — token/context-saving workflow outline.
-- `scripts/install-rtk-for-claude.sh` — initializes RTK for Claude Code after RTK is installed.
-- `scripts/install-rtk-for-codex.sh` — initializes RTK for Codex after RTK is installed.
-- `scripts/update-ai-clis.sh` — updates/checks Claude Code, Codex CLI, and RTK.
-- `scripts/save-codex-token-context.sh` — local context snapshot helper.
-- `recipes/ai-cli-updates.md` — update policy and manual commands for AI CLIs.
+```bash
+python3 tools/mcp/mcp_config.py install filesystem --client codex
+```
+
+Install one into LM Studio:
+
+```bash
+python3 tools/mcp/mcp_config.py install filesystem --client lmstudio
+```
+
+If you want a console command, install the repo in editable mode:
+
+```bash
+pip install -e .
+mcp-tool list
+```
+
+## Included Pieces
+
+- `tools/mcp/README.md` explains the registry format and client install behavior.
+- `docs/mcp-guide.md` is the focused guide for the MCP workflow in this repo.
+- `scripts/install-rtk-for-claude.sh` and `scripts/install-rtk-for-codex.sh` stay separate from the MCP tool.
+- `recipes/` and `prompts/` remain docs-only until a script proves necessary.
 
 ## Principles
 
-- Prefer plain Markdown over hidden automation.
-- Prefer small scripts over framework-heavy tooling.
-- Keep secrets and machine-local paths out of git.
-- Make every workflow copy-pastable before making it clever.
-- Promote CLI behavior only after the recipe/script has proven useful.
+- Prefer one small registry over one config file per client.
+- Use client-native install commands when they exist.
+- Keep secrets and machine-local values out of git.
+- Add automation only after the manual workflow is clear.

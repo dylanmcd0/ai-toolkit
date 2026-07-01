@@ -1,6 +1,9 @@
 {
-  "mcpServers": {
+  "version": 1,
+  "servers": {
     "filesystem": {
+      "description": "Read and write inside one allowed directory.",
+      "transport": "stdio",
       "command": "npx",
       "args": [
         "-y",
@@ -8,6 +11,22 @@
         "/path/to/allowed/directory"
       ],
       "env": {}
+    },
+    "github": {
+      "description": "GitHub MCP server through Docker.",
+      "transport": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
     }
   }
 }

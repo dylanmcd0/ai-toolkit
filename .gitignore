@@ -1,5 +1,6 @@
 # Local config and secrets
 config/*.local.json
+config/mcp-servers.json
 *.env
 .env.*
 

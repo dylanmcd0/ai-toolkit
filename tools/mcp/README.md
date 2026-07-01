@@ -1,22 +1,26 @@
 # MCP Tools
 
-Small utilities for managing Model Context Protocol server configuration.
+`tools/mcp/mcp_config.py` is a small registry-first CLI.
 
-The goal is to standardize the boring parts:
+It does two jobs only:
 
-- where MCP server definitions live
-- how new servers are added
-- how local machine-specific values stay out of git
-- how configs can be copied into Claude, Codex, or other clients
+1. Keep one JSON registry of the MCP servers you actually use.
+2. Install those entries into specific clients.
 
-## Config Shape
+## Registry File
 
-This toolkit uses the common `mcpServers` object:
+Default registry path: `config/mcp-servers.json`
+
+Tracked example: `config/mcp-servers.example.json`
+
+Shape:
 
 ```json
 {
-  "mcpServers": {
+  "version": 1,
+  "servers": {
     "server-name": {
+      "transport": "stdio",
       "command": "command-to-run",
       "args": ["arg1", "arg2"],
       "env": {
@@ -27,39 +31,42 @@ This toolkit uses the common `mcpServers` object:
 }
 ```
 
+HTTP-style entries use `url` instead of `command` and `args`. Optional `headers` are supported in the registry for Claude and LM Studio installs.
+
 ## Commands
 
-Create or update a local MCP config:
+Inspect the registry:
 
 ```bash
-python3 tools/mcp/mcp_config.py add \
-  --config config/mcp-servers.local.json \
-  --name server-name \
-  --command command-to-run \
-  --arg arg1 \
-  --arg arg2
+python3 tools/mcp/mcp_config.py list
+python3 tools/mcp/mcp_config.py show github
+python3 tools/mcp/mcp_config.py validate
 ```
 
-Add environment variables:
+Add or update a stdio server:
 
 ```bash
-python3 tools/mcp/mcp_config.py add \
-  --config config/mcp-servers.local.json \
-  --name github \
-  --command npx \
-  --arg "-y" \
-  --arg "@modelcontextprotocol/server-github" \
-  --env GITHUB_PERSONAL_ACCESS_TOKEN=your-token
+python3 tools/mcp/mcp_config.py add github \
+  --command docker \
+  --arg=run \
+  --arg=-i \
+  --arg=--rm \
+  --arg=-e \
+  --arg=GITHUB_PERSONAL_ACCESS_TOKEN \
+  --arg=ghcr.io/github/github-mcp-server \
+  --env GITHUB_PERSONAL_ACCESS_TOKEN='${GITHUB_PERSONAL_ACCESS_TOKEN}'
 ```
 
-List servers:
+Install to a client:
 
 ```bash
-python3 tools/mcp/mcp_config.py list --config config/mcp-servers.local.json
+python3 tools/mcp/mcp_config.py install github --client codex
+python3 tools/mcp/mcp_config.py install github --client claude --scope user
+python3 tools/mcp/mcp_config.py install github --client lmstudio
 ```
 
-Remove a server:
+Install every registry entry to a client:
 
 ```bash
-python3 tools/mcp/mcp_config.py remove --config config/mcp-servers.local.json --name github
+python3 tools/mcp/mcp_config.py install --all --client claude --scope project
 ```

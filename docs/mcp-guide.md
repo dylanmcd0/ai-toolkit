@@ -1,101 +1,87 @@
-# MCP (Model Context Protocol) Guide
+# MCP Guide
 
-## What is MCP?
+This repo does not treat MCP config as a one-off edit inside each client anymore. The workflow is:
 
-MCP is a standardized protocol for connecting AI models (especially Claude) to external tools and data sources. It allows Claude to interact with:
-- APIs and web services
-- File systems and databases
-- Custom applications and workflows
-- Real-time data sources
+1. Keep your server definitions in one registry file.
+2. Install from that registry into Codex, Claude Code, or LM Studio.
+3. Let each client keep its own native config format.
 
-## How MCP Works
+## Registry First
 
-1. **Server**: A process that provides tools, resources, or information
-2. **Client**: Claude Code, Claude API, or other clients that use those tools
-3. **Protocol**: Standardized communication via JSON-RPC over stdio or HTTP
+The tracked example lives at `config/mcp-servers.example.json`. Your working file should be `config/mcp-servers.json`.
 
-## Configuration in Claude Code
-
-MCP servers are configured in Claude Code's `settings.json`:
+Registry shape:
 
 ```json
 {
-  "mcpServers": {
-    "server-name": {
-      "command": "python",
-      "args": ["-m", "mcp_server_module"]
+  "version": 1,
+  "servers": {
+    "filesystem": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path"],
+      "env": {}
     }
   }
 }
 ```
 
-The config typically lives at:
-- **User level**: `~/.claude/claude_code/settings.json`
-- **Project level**: `.claude/settings.json` (optional, overrides user settings)
-
-## Common MCP Servers
-
-### File Operations
-- `filesystem` — Read, write, and manage files
-
-### Web & APIs
-- `brave-search` — Web search capabilities
-- `postgresql` — Database queries
-- `slack` — Slack workspace integration
-
-### Development
-- `git` — Git repository operations
-- `bash` — Shell command execution
-
-## Using ai-toolkit for MCP Setup
-
-Instead of manually editing `settings.json`, use:
+Use the CLI directly:
 
 ```bash
-# Add a server
-ai-toolkit mcp add --name github --command python --args "-m mcp_server_github"
-
-# List all servers
-ai-toolkit mcp list
-
-# Validate configuration
-ai-toolkit mcp validate
+python3 tools/mcp/mcp_config.py list
+python3 tools/mcp/mcp_config.py show filesystem
+python3 tools/mcp/mcp_config.py validate
 ```
 
-## Building Custom MCP Servers
+Add a server to the registry:
 
-MCP servers can be built in any language. A minimal Python server:
-
-```python
-from mcp.server import Server
-from mcp.types import Tool
-
-server = Server("my-server")
-
-@server.list_tools()
-async def list_tools():
-    return [
-        Tool(
-            name="add",
-            description="Add two numbers",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "a": {"type": "number"},
-                    "b": {"type": "number"}
-                }
-            }
-        )
-    ]
-
-@server.call_tool()
-async def call_tool(name: str, arguments: dict):
-    if name == "add":
-        return str(arguments["a"] + arguments["b"])
+```bash
+python3 tools/mcp/mcp_config.py add filesystem \
+  --command npx \
+  --arg=-y \
+  --arg=@modelcontextprotocol/server-filesystem \
+  --arg=/Users/you/Documents
 ```
 
-## Learning Resources
+## Install Targets
 
-- [MCP Documentation](https://modelcontextprotocol.io)
-- [Claude API Integration](https://docs.anthropic.com)
-- [ai-toolkit README](../README.md)
+The installer is intentionally client-specific:
+
+- `codex`: calls `codex mcp add` and `codex mcp remove`
+- `claude`: calls `claude mcp add` and `claude mcp remove`
+- `lmstudio`: updates `~/.lmstudio/mcp.json` directly
+
+Examples:
+
+```bash
+python3 tools/mcp/mcp_config.py install filesystem --client codex
+python3 tools/mcp/mcp_config.py install filesystem --client claude --scope user
+python3 tools/mcp/mcp_config.py install filesystem --client lmstudio
+python3 tools/mcp/mcp_config.py install --all --client claude --scope project
+```
+
+Use `--dry-run` first if you want to inspect the generated install command or JSON change:
+
+```bash
+python3 tools/mcp/mcp_config.py install filesystem --client codex --dry-run
+```
+
+## Why This Shape
+
+The original scaffold mixed two different ideas:
+
+- a reusable server registry
+- a generic all-in-one AI toolkit package
+
+That made the MCP part harder to evolve. The new shape keeps the useful piece only: one small registry CLI under `tools/mcp`.
+
+## Client Notes
+
+- `codex` stores MCP servers in `~/.codex/config.toml` under `mcp_servers`.
+- `claude` can manage MCP servers through `claude mcp ...`, with scope support.
+- `lmstudio` keeps MCP definitions in `~/.lmstudio/mcp.json`.
+
+## Next Step
+
+Once the registry format settles, the next useful additions are presets and export helpers. Until then, keep the file explicit and small.

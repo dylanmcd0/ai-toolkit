@@ -13,14 +13,14 @@ The repo should remain docs-first and modular. Avoid turning it into one large C
 - `recipes/` — Markdown setup guides and operational playbooks.
 - `scripts/` — convenience scripts for local setup or context capture.
 - `config/` — example configuration files; local config should be ignored.
-- `ai_toolkit/` — existing Python CLI package from the initial scaffold; migrate useful behavior gradually.
 - `docs/` — background/reference notes from earlier exploration.
 
 ## Commands
 
 - Run MCP helper: `python3 tools/mcp/mcp_config.py --help`
-- List example MCP config: `python3 tools/mcp/mcp_config.py list --config config/mcp-servers.example.json`
-- Install legacy package, if needed: `pip install -e .`
+- List local MCP registry: `python3 tools/mcp/mcp_config.py list`
+- Install one server into Claude: `python3 tools/mcp/mcp_config.py install filesystem --client claude --scope user`
+- Optional console entry point: `pip install -e .`
 - Run legacy tests, if expanded later: `pytest`
 
 ## Coding Preferences
@@ -29,7 +29,7 @@ The repo should remain docs-first and modular. Avoid turning it into one large C
 - Do not introduce new dependencies unless they remove meaningful complexity.
 - Keep secrets, tokens, and machine-local paths out of git.
 - Keep examples copy-pastable and easy to adapt.
-- Do not delete the legacy CLI package unless explicitly asked; migrate from it incrementally.
+- Keep the MCP registry format simple and client-agnostic.
 
 ## Review Expectations
 

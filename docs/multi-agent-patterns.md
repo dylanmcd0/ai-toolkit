@@ -96,10 +96,6 @@ User Input → Generator → Evaluator → Output
 4. **Cost Control**: Batch prompts and reuse context
 5. **Testability**: Test agents individually before combining
 
-## Next Steps with ai-toolkit
+## Next Steps
 
-The `workflows` command will help scaffold:
-- Agent definitions and roles
-- Communication templates
-- Performance monitoring
-- Cost tracking (via rtk integration)
+If this area becomes active again, build it as a focused script or recipe first instead of adding another broad package surface.
