@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # CLAUDE.md
 
 ## Project Overview
@@ -37,3 +39,20 @@ The repo should remain docs-first and modular. Avoid turning it into one large C
 - Flag YAGNI abstractions and framework-heavy changes.
 - Suggest the smallest useful improvement.
 - Ignore formatting-only issues unless no formatter/linter exists.
+
+## Claude Code
+
+Use `/clear` between unrelated tasks. For a substantial change, inspect the
+relevant recipe, script, prompt, or MCP helper first, state the implementation
+boundary, then make and verify the change. Use `/memory` to confirm this file
+loaded if project guidance appears missing.
+
+Prefer GitHub CLI for pull requests. Verify auth first:
+
+```bash
+gh auth status
+gh pr create --fill
+```
+
+If `gh auth status` fails, push the branch and hand off the compare URL instead
+of implying that a PR was opened.

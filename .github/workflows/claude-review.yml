@@ -1,0 +1,55 @@
+name: Claude review
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: >
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '@claude review') &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: claude-review-${{ github.event.issue.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+      - name: Mark review as seen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh api --method POST
+          repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/reactions
+          -f content=eyes
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Review PR ${{ github.event.issue.number }} in ${{ github.repository }}.
+            Use the triggering comment as the review request:
+            ${{ github.event.comment.body }}
+          claude_args: |
+            --model claude-sonnet-5
+            --max-turns 60
+            --allowedTools "Bash(gh:*),Bash(git:*),Bash(python:*),Bash(pytest:*),Read,Grep,Glob,Edit,Write"
